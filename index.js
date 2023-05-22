@@ -5,6 +5,7 @@ import dotennv from 'dotenv';
 import Student from './models/Students.js'
 import { createCache, getCache, flushCache } from './util/cache.js';
 import sayHelloQueue from "./util/bull.js"
+import activeStudentsCount from "./util/cron.js"
 
 dotennv.config();
 const app = express();
@@ -36,7 +37,7 @@ app.post('/student', async (req, res) => {
     })
 
     const savedStudent = await student.save();
-    sayHelloQueue.add({email: email, mobile: mobile})
+    sayHelloQueue.add({ email: email, mobile: mobile })
     flushCache();
 
     res.json({
@@ -67,4 +68,9 @@ app.get('/students', async (req, res) => {
 
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT} 🚀`);
+    activeStudentsCount.add({}, {
+        repeat: {
+            every: 60 * 1000,
+        }
+    })
 });
