@@ -4,6 +4,7 @@ import dotennv from 'dotenv';
 
 import Student from './models/Students.js'
 import { createCache, getCache, flushCache } from './util/cache.js';
+import sayHelloQueue from "./util/bull.js"
 
 dotennv.config();
 const app = express();
@@ -35,6 +36,7 @@ app.post('/student', async (req, res) => {
     })
 
     const savedStudent = await student.save();
+    sayHelloQueue.add({email: email, mobile: mobile})
     flushCache();
 
     res.json({
