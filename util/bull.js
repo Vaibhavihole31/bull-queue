@@ -29,6 +29,10 @@ sayHelloQueue.process(function (job, done) {
 
     console.log('Done processing job ', job.id);
     done();
+
+    sayHelloQueue.on('completed', (job) => {
+        console.log(`Job ${job.id} completed with progress ${job.progress()}%`);
+      });
   
 });
 
